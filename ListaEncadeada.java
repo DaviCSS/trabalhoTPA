@@ -12,7 +12,8 @@ public class ListaEncadeada<T> implements IColecao<T> {
 
     // Construtor: cria uma lista passando se ela será ordenada e qual comparador
     // usar
-    public ListaEncadeada(boolean ehOrdenada, Comparator<T> comparador) {
+    public ListaEncadeada(Comparator<T> comparador, boolean ehOrdenada) {
+        // ... corpo do construtor {
         this.prim = this.ult = null; // A lista começa vazia, sem nenhum nó
         this.quant = 0; // Quantidade inicial é zero
         this.ordenada = ehOrdenada; // Guarda se é pra ser ordenada

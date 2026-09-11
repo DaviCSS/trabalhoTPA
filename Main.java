@@ -7,7 +7,7 @@ public class Main {
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in); // Cria o leitor de entradas do usuário pelo teclado
-        ListaEncadeada<Contato> lista = null;      // A lista que vai guardar todos os contatos (começa vazia)
+        IColecao<Contato> lista = null; // A lista que vai guardar todos os contatos (começa vazia)
 
         // Pergunta ao usuário se ele quer a lista em ordem alfabética ou não
         System.out.println("Deseja criar uma lista ordenada?");
@@ -23,9 +23,9 @@ public class Main {
 
         // Cria a lista de acordo com a escolha do usuário
         if (opOrdenacao == 1) {
-            lista = new ListaEncadeada<>(true, comparadorNome);  // Ordenada
+            lista = new ListaEncadeada<>(comparadorNome, true); // Ordenada
         } else {
-            lista = new ListaEncadeada<>(false, comparadorNome); // Não ordenada
+            lista = new ListaEncadeada<>(comparadorNome, false); // Não ordenada
         }
 
         int opcao = 0;
@@ -132,10 +132,14 @@ public class Main {
 
                 case 6:
                     // Altera os dados de um contato existente
-                    // A estratégia aqui é: remove o contato antigo e adiciona um novo com os dados atualizados
+                    // A estratégia aqui é: remove o contato antigo e adiciona um novo com os dados
+                    // atualizados
                     System.out.print("Digite o nome do contato que deseja alterar: ");
                     String altNome = scanner.nextLine();
-                    Contato alvo = lista.pesquisar(new Contato(altNome, "")); // Busca o contato pelo nome
+
+                    // Busca o contato pelo nome (telefone vazio para o equals do Contato comparar
+                    // pelo nome)
+                    Contato alvo = lista.pesquisar(new Contato(altNome, ""));
 
                     if (alvo != null) {
                         System.out.println("Telefone atual: " + alvo.getTelefone());
@@ -144,14 +148,27 @@ public class Main {
                         System.out.print("Digite o NOVO telefone: ");
                         String novoTel = scanner.nextLine();
 
-                        lista.remover(alvo);                             // Remove o contato antigo
-                        lista.adicionar(new Contato(novoNome, novoTel)); // Adiciona com os novos dados
-                        System.out.println("Contato alterado com sucesso!");
+                        // Evita que o usuário deixe os campos em branco na alteração
+                        if (novoNome.trim().isEmpty() || novoTel.trim().isEmpty()) {
+                            System.out.println("Erro: Não é possível deixar o contato sem nome ou sem telefone.");
+                        } else {
+                            // Verifica se o novo telefone digitado já existe na lista
+                            Contato donoDoTelefone = lista.pesquisar(new Contato("", novoTel));
+
+                            // Se achou alguém com esse telefone E esse telefone NÃO É o do próprio contato
+                            // que estamos editando agora, então é uma duplicata inválida.
+                            if (donoDoTelefone != null && !novoTel.equals(alvo.getTelefone())) {
+                                System.out.println("Erro: Já existe outro contato com esse telefone!");
+                            } else {
+                                lista.remover(alvo); // Remove o contato antigo
+                                lista.adicionar(new Contato(novoNome, novoTel)); // Adiciona com os novos dados
+                                System.out.println("Contato alterado com sucesso!");
+                            }
+                        }
                     } else {
                         System.out.println("Contato não encontrado.");
                     }
                     break;
-
                 case 7:
                     // Encerra o programa e mostra quantos contatos ficaram na lista
                     System.out.println("Encerrando o programa...");
@@ -169,7 +186,7 @@ public class Main {
     // Método para ler o arquivo
     // Lê um arquivo chamado "entrada.txt" e carrega os contatos na lista.
     // Cada linha do arquivo deve ter o formato: Nome;Telefone
-    private static void carregarArquivo(ListaEncadeada<Contato> lista) {
+    private static void carregarArquivo(IColecao<Contato> lista) {
         File arquivo = new File("entrada.txt"); // Procura o arquivo na pasta do projeto
         try {
             Scanner leitor = new Scanner(arquivo);
@@ -179,7 +196,8 @@ public class Main {
                 String linha = leitor.nextLine();
                 String[] dados = linha.split(";"); // O formato fica a seu critério, usei ";"
                 if (dados.length == 2) { // A linha tem exatamente 2 partes (nome e telefone)?
-                    Contato c = new Contato(dados[0].trim(), dados[1].trim()); // Cria o contato (trim() remove espaços extras)
+                    Contato c = new Contato(dados[0].trim(), dados[1].trim()); // Cria o contato (trim() remove espaços
+                                                                               // extras)
                     // Verifica duplicidade antes de inserir
                     if (lista.pesquisar(c) == null) { // Só adiciona se o contato ainda não existir
                         lista.adicionar(c);
@@ -190,7 +208,9 @@ public class Main {
             leitor.close(); // Fecha o arquivo (boa prática!)
 
             System.out.println("Arquivo lido e lista montada com sucesso!");
-            System.out.println("Tempo total gasto: " + (fim - inicio) / 1_000_000.0 + " ms"); // Converte de nanosegundos para milissegundos
+            System.out.println("Tempo total gasto: " + (fim - inicio) / 1_000_000.0 + " ms"); // Converte de
+                                                                                              // nanosegundos para
+                                                                                              // milissegundos
 
         } catch (FileNotFoundException e) {
             // Se o arquivo não for encontrado, avisa o usuário
