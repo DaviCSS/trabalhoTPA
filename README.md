@@ -42,7 +42,7 @@ O sistema foi estruturado com marcadores temporais (`System.nanoTime()`) para ex
 
 ## Integrantes do Projeto
 
-| Aluno | 
+| Alunos | 
 |-------|
 | Alice Lourenço dos Reis | 
 | Davi Campos Sutil | 
