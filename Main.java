@@ -6,29 +6,30 @@ import java.util.Scanner;
 public class Main {
 
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in); // Cria o leitor de entradas do usuário pelo teclado
-        IColecao<Contato> lista = null; // A lista que vai guardar todos os contatos (começa vazia)
+        Scanner scanner = new Scanner(System.in);
+        IColecao<Contato> lista = null;
 
-        // Pergunta ao usuário se ele quer a lista em ordem alfabética ou não
-        System.out.println("Deseja criar uma lista ordenada?");
-        System.out.println("1 - Sim (Ordenada por Nome)");
-        System.out.println("2 - Não (Desordenada)");
+        System.out.println("Deseja criar qual estrutura?");
+        System.out.println("1 - Lista Encadeada Ordenada (Nome)");
+        System.out.println("2 - Lista Encadeada Desordenada");
+        System.out.println("3 - Árvore Binária (Indexada por Telefone)");
         System.out.print("Opção: ");
-        int opOrdenacao = scanner.nextInt();
-        scanner.nextLine(); // Limpa o "Enter" que sobrou no buffer após o nextInt()
+        int opEstrutura = scanner.nextInt();
+        scanner.nextLine();
 
-        // Esse comparador ensina a lista como comparar dois contatos:
-        // ele compara os nomes ignorando se é maiúscula ou minúscula
         Comparator<Contato> comparadorNome = (c1, c2) -> c1.getNome().compareToIgnoreCase(c2.getNome());
+        Comparator<Contato> comparadorTelefone = (c1, c2) -> c1.getTelefone().compareToIgnoreCase(c2.getTelefone());
 
-        // Cria a lista de acordo com a escolha do usuário
-        if (opOrdenacao == 1) {
-            lista = new ListaEncadeada<>(comparadorNome, true); // Ordenada
+        if (opEstrutura == 1) {
+            lista = new ListaEncadeada<>(comparadorNome, true);
+        } else if (opEstrutura == 2) {
+            lista = new ListaEncadeada<>(comparadorNome, false);
         } else {
-            lista = new ListaEncadeada<>(comparadorNome, false); // Não ordenada
+            lista = new ArvoreBinaria<>(comparadorTelefone); 
         }
 
         int opcao = 0;
+        // O loop while (opcao != 7) continua exatamente igual a partir daqui...
         // O menu fica rodando em loop até o usuário escolher a opção 7 (Sair)
         while (opcao != 7) {
             System.out.println("\n--- MENU DE CONTATOS ---");
@@ -39,6 +40,9 @@ public class Main {
             System.out.println("5. Remover contato por telefone");
             System.out.println("6. Alterar dados de contato");
             System.out.println("7. Sair");
+            if (lista instanceof ArvoreBinaria) {
+                System.out.println("8. Ver altura da árvore");
+            }
             System.out.print("Escolha uma opção: ");
             opcao = scanner.nextInt();
             scanner.nextLine(); // Limpa o buffer após ler o número
@@ -80,7 +84,7 @@ public class Main {
 
                     // Pesquisa usando um Contato com nome preenchido e telefone vazio
                     // (o equals() da classe Contato sabe que deve comparar pelo nome nesse caso)
-                    Contato encontradoNome = lista.pesquisar(new Contato(buscaNome, ""));
+                    Contato encontradoNome = pesquisarPorNome(lista, comparadorNome, new Contato(buscaNome, ""));
 
                     long fimNome = System.nanoTime(); // Marca o tempo de fim
 
@@ -139,7 +143,7 @@ public class Main {
 
                     // Busca o contato pelo nome (telefone vazio para o equals do Contato comparar
                     // pelo nome)
-                    Contato alvo = lista.pesquisar(new Contato(altNome, ""));
+                    Contato alvo = pesquisarPorNome(lista, comparadorNome, new Contato(altNome, ""));
 
                     if (alvo != null) {
                         System.out.println("Telefone atual: " + alvo.getTelefone());
@@ -175,12 +179,30 @@ public class Main {
                     System.out.println("Total de contatos na lista: " + lista.quantidadeNos());
                     break;
 
+                case 8:
+                    // Altura só existe para a árvore binária
+                    if (lista instanceof ArvoreBinaria) {
+                        System.out.println("Altura da árvore: " + ((ArvoreBinaria<Contato>) lista).altura());
+                    } else {
+                        System.out.println("Opção inválida!");
+                    }
+                    break;
+
                 default:
                     // Qualquer número fora do menu cai aqui
                     System.out.println("Opção inválida!");
             }
         }
         scanner.close(); // Fecha o scanner ao terminar (boa prática!)
+    }
+
+    // Pesquisa por nome. Na árvore (indexada por telefone) percorre todos os nós;
+    // nas listas usa a pesquisa normal.
+    private static Contato pesquisarPorNome(IColecao<Contato> lista, Comparator<Contato> comparadorNome, Contato chave) {
+        if (lista instanceof ArvoreBinaria) {
+            return ((ArvoreBinaria<Contato>) lista).pesquisar(chave, comparadorNome);
+        }
+        return lista.pesquisar(chave);
     }
 
     // Método para ler o arquivo
