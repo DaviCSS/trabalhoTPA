@@ -3,12 +3,14 @@ public class NoArvore<T> {
     private T valor;
     private NoArvore<T> esq;
     private NoArvore<T> dir;
+    private int altura; // Altura usada no balanceamento da AVL.
 
     public NoArvore(T valor) {
         // O nó começa sem filhos.
         this.valor = valor;
         this.esq = null;
         this.dir = null;
+        this.altura = 0; // Um nó sem filhos tem altura zero.
     }
 
     // Os métodos abaixo consultam ou alteram os dados do nó.
@@ -18,4 +20,6 @@ public class NoArvore<T> {
     public void setEsq(NoArvore<T> esq) { this.esq = esq; }
     public NoArvore<T> getDir() { return dir; }
     public void setDir(NoArvore<T> dir) { this.dir = dir; }
+    public int getAltura() { return altura; }
+    public void setAltura(int altura) { this.altura = altura; }
 }
