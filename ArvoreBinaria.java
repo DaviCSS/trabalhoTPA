@@ -1,8 +1,10 @@
 import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class ArvoreBinaria<T> extends ArvoreBinariaBase<T> {
-    private NoArvore<T> raiz;
-    private int quant;
+    protected NoArvore<T> raiz;
+    protected int quant;
 
     public ArvoreBinaria(Comparator<T> comparador) {
         super(comparador);
@@ -12,95 +14,113 @@ public class ArvoreBinaria<T> extends ArvoreBinariaBase<T> {
 
     @Override
     public boolean adicionar(T novoValor) {
-        if (this.raiz == null) {
-            this.raiz = new NoArvore<>(novoValor);
+        // Guardamos a quantidade para saber se um nó foi inserido.
+        int quantidadeAnterior = this.quant;
+        this.raiz = adicionarRecursivo(this.raiz, novoValor);
+        return this.quant > quantidadeAnterior;
+    }
+
+    // código do professor
+    private NoArvore<T> adicionarRecursivo(NoArvore<T> no, T novoValor) {
+        // Se encontramos um espaço vazio, criamos o nó.
+        if (no == null) {
             this.quant++;
-            return true;
+            return new NoArvore<>(novoValor);
         }
 
-        NoArvore<T> atual = this.raiz;
-        while (true) {
-            int cmp = comparador.compare(novoValor, atual.getValor());
-            if (cmp == 0) return false; 
+        // Comparamos o novo valor com o nó atual.
+        int cmp = comparador.compare(novoValor, no.getValor());
 
-            if (cmp < 0) {
-                if (atual.getEsq() == null) {
-                    atual.setEsq(new NoArvore<>(novoValor));
-                    this.quant++;
-                    return true;
-                }
-                atual = atual.getEsq();
-            } else {
-                if (atual.getDir() == null) {
-                    atual.setDir(new NoArvore<>(novoValor));
-                    this.quant++;
-                    return true;
-                }
-                atual = atual.getDir();
-            }
+        // Menores vão à esquerda, maiores vão à direita.
+        if (cmp < 0) {
+            no.setEsq(adicionarRecursivo(no.getEsq(), novoValor));
+        } else if (cmp > 0) {
+            no.setDir(adicionarRecursivo(no.getDir(), novoValor));
         }
+
+        // Se for igual, não criamos outro nó.
+        return no;
     }
 
     @Override
     public T pesquisar(T valor) {
-        NoArvore<T> atual = this.raiz;
-        while (atual != null) {
-            int cmp = comparador.compare(valor, atual.getValor());
-            if (cmp == 0) return atual.getValor();
-            if (cmp < 0) atual = atual.getEsq();
-            else atual = atual.getDir();
-        }
-        return null;
+        return pesquisarRecursivo(this.raiz, valor);
     }
 
-    /**
-     * Pesquisa por um critério diferente do usado para indexar a árvore.
-     * Percorre todos os nós (O(n)) usando o comparador informado.
-     */
+    // código do professor
+    private T pesquisarRecursivo(NoArvore<T> no, T valor) {
+        // Se chegamos ao fim, o valor não existe.
+        if (no == null) return null;
+
+        // A comparação indica qual caminho seguir.
+        int cmp = comparador.compare(valor, no.getValor());
+        if (cmp == 0) return no.getValor();
+        if (cmp < 0) return pesquisarRecursivo(no.getEsq(), valor);
+        return pesquisarRecursivo(no.getDir(), valor);
+    }
+
     public T pesquisar(T valor, Comparator<T> outroComparador) {
-        java.util.ArrayDeque<NoArvore<T>> pilha = new java.util.ArrayDeque<>();
-        if (this.raiz != null) pilha.push(this.raiz);
-        while (!pilha.isEmpty()) {
-            NoArvore<T> atual = pilha.pop();
-            if (outroComparador.compare(valor, atual.getValor()) == 0) return atual.getValor();
-            if (atual.getDir() != null) pilha.push(atual.getDir());
-            if (atual.getEsq() != null) pilha.push(atual.getEsq());
-        }
-        return null;
+        return pesquisarOutro(this.raiz, valor, outroComparador);
+    }
+
+    private T pesquisarOutro(NoArvore<T> no, T valor, Comparator<T> outroComparador) {
+        // Essa busca usa outro critério, então confere os dois lados.
+        if (no == null) return null;
+        if (outroComparador.compare(valor, no.getValor()) == 0) return no.getValor();
+
+        // Procuramos primeiro na esquerda.
+        T encontrado = pesquisarOutro(no.getEsq(), valor, outroComparador);
+        if (encontrado != null) return encontrado;
+
+        // Se não achamos, procuramos na direita.
+        return pesquisarOutro(no.getDir(), valor, outroComparador);
     }
 
     @Override
     public boolean remover(T valor) {
-        NoArvore<T> atual = this.raiz;
-        NoArvore<T> pai = null;
+        // Guardamos a quantidade para saber se houve remoção.
+        int quantidadeAnterior = this.quant;
+        this.raiz = removerRecursivo(this.raiz, valor);
+        return this.quant < quantidadeAnterior;
+    }
 
-        while (atual != null && comparador.compare(valor, atual.getValor()) != 0) {
-            pai = atual;
-            if (comparador.compare(valor, atual.getValor()) < 0) atual = atual.getEsq();
-            else atual = atual.getDir();
-        }
+    // código do professor
+    private NoArvore<T> removerRecursivo(NoArvore<T> no, T valor) {
+        // Se o nó não existe, não há nada para remover.
+        if (no == null) return null;
 
-        if (atual == null) return false;
-
-        if (atual.getEsq() == null || atual.getDir() == null) {
-            NoArvore<T> substituto = (atual.getEsq() != null) ? atual.getEsq() : atual.getDir();
-            if (pai == null) this.raiz = substituto;
-            else if (atual == pai.getEsq()) pai.setEsq(substituto);
-            else pai.setDir(substituto);
+        // Primeiro procuramos o valor pelo caminho correto.
+        int cmp = comparador.compare(valor, no.getValor());
+        if (cmp < 0) {
+            no.setEsq(removerRecursivo(no.getEsq(), valor));
+        } else if (cmp > 0) {
+            no.setDir(removerRecursivo(no.getDir(), valor));
         } else {
-            NoArvore<T> paiSucessor = atual;
-            NoArvore<T> sucessor = atual.getDir();
-            while (sucessor.getEsq() != null) {
-                paiSucessor = sucessor;
-                sucessor = sucessor.getEsq();
+            // Se não há filho esquerdo, retorna o direito.
+            if (no.getEsq() == null) {
+                this.quant--;
+                return no.getDir();
             }
-            atual.setValor(sucessor.getValor());
-            if (paiSucessor.getEsq() == sucessor) paiSucessor.setEsq(sucessor.getDir());
-            else paiSucessor.setDir(sucessor.getDir());
+
+            // Se não há filho direito, retorna o esquerdo.
+            if (no.getDir() == null) {
+                this.quant--;
+                return no.getEsq();
+            }
+
+            // Com dois filhos, buscamos o maior da subárvore esquerda.
+            NoArvore<T> maiorEsquerda = no.getEsq();
+            while (maiorEsquerda.getDir() != null) {
+                maiorEsquerda = maiorEsquerda.getDir();
+            }
+
+            // Copiamos seu valor e removemos o nó antigo.
+            no.setValor(maiorEsquerda.getValor());
+            no.setEsq(removerRecursivo(no.getEsq(), maiorEsquerda.getValor()));
         }
 
-        this.quant--;
-        return true;
+        // Retornamos a raiz atualizada da subárvore.
+        return no;
     }
 
     @Override
@@ -114,17 +134,60 @@ public class ArvoreBinaria<T> extends ArvoreBinariaBase<T> {
     }
 
     private int calculaAltura(NoArvore<T> no) {
+        // Uma árvore vazia tem altura -1.
         if (no == null) return -1;
+
+        // A altura usa o lado que chega mais longe.
         return 1 + Math.max(calculaAltura(no.getEsq()), calculaAltura(no.getDir()));
     }
 
     @Override
     public String caminharEmNivel() {
-        return "[]"; 
+        // A fila permite visitar todos os nós de cada nível.
+        if (this.raiz == null) return "[]";
+        StringBuilder resultado = new StringBuilder("[");
+        Queue<NoArvore<T>> fila = new LinkedList<>();
+        fila.add(this.raiz);
+
+        while (!fila.isEmpty()) {
+            // Guardamos quantos nós pertencem ao nível atual.
+            int quantidadeNivel = fila.size();
+
+            for (int i = 0; i < quantidadeNivel; i++) {
+                NoArvore<T> atual = fila.remove();
+                if (i > 0) resultado.append(", ");
+                resultado.append(atual.getValor());
+
+                // Os filhos ficam na fila para o próximo nível.
+                if (atual.getEsq() != null) fila.add(atual.getEsq());
+                if (atual.getDir() != null) fila.add(atual.getDir());
+            }
+
+            // Se houver mais nós, começamos uma nova linha.
+            if (!fila.isEmpty()) resultado.append("\n");
+        }
+
+        return resultado.append("]").toString();
     }
 
     @Override
     public String caminharEmOrdem() {
-        return "[]"; 
+        StringBuilder resultado = new StringBuilder("[");
+        montarEmOrdem(this.raiz, resultado);
+        return resultado.append("]").toString();
+    }
+
+    // código do professor
+    private void montarEmOrdem(NoArvore<T> no, StringBuilder resultado) {
+        // Primeiro percorremos a esquerda.
+        if (no == null) return;
+        montarEmOrdem(no.getEsq(), resultado);
+
+        // Depois adicionamos o nó atual.
+        if (resultado.length() > 1) resultado.append(", ");
+        resultado.append(no.getValor());
+
+        // Por último percorremos a direita.
+        montarEmOrdem(no.getDir(), resultado);
     }
 }
