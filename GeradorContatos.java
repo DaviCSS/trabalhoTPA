@@ -5,7 +5,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 public class GeradorContatos {
-    private static final int[] TAMANHOS = {255, 511, 1023, 2047};
+    private static final int[] TAMANHOS = {8191, 16383, 32767, 65535};
 
     // Nomes e sobrenomes utilizados para gerar os contatos.
     private static final String[] NOMES = {
@@ -76,7 +76,7 @@ public class GeradorContatos {
 
     private static void escreverContato(BufferedWriter escritor, int id) throws IOException {
         // O mesmo identificador sempre gera o mesmo nome e telefone.
-        String nome = NOMES[(id - 1) % NOMES.length] + " " + SOBRENOMES[(id - 1) / NOMES.length];
+        String nome = NOMES[(id - 1) % NOMES.length] + " " + SOBRENOMES[((id - 1) / NOMES.length) % SOBRENOMES.length] + " " + SOBRENOMES[((id - 1) / (NOMES.length * SOBRENOMES.length) + 1) % SOBRENOMES.length];
         String telefone = String.format("279%08d", id);
 
         // Mantemos o formato do Trabalho 1: Nome;Telefone.
