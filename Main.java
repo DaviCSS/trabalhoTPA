@@ -13,6 +13,7 @@ public class Main {
         System.out.println("1 - Lista Encadeada Ordenada (Nome)");
         System.out.println("2 - Lista Encadeada Desordenada");
         System.out.println("3 - Árvore Binária (Indexada por Telefone)");
+        System.out.println("4 - Árvore AVL (Indexada por Telefone)");
         System.out.print("Opção: ");
         int opEstrutura = scanner.nextInt();
         scanner.nextLine();
@@ -26,6 +27,8 @@ public class Main {
             lista = new ListaEncadeada<>(comparadorNome, false);
         } else if (opEstrutura == 3) {
             lista = new ArvoreBinaria<>(comparadorTelefone);
+        } else if (opEstrutura == 4) {
+            lista = new ArvoreAVL<>(comparadorTelefone);
         } else {
             // Uma opção inválida não cria nenhuma estrutura.
             System.out.println("Opção inválida!");
