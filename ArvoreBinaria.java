@@ -3,8 +3,8 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 public class ArvoreBinaria<T> extends ArvoreBinariaBase<T> {
-    private NoArvore<T> raiz;
-    private int quant;
+    protected NoArvore<T> raiz;
+    protected int quant;
 
     public ArvoreBinaria(Comparator<T> comparador) {
         super(comparador);
