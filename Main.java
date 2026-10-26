@@ -24,13 +24,17 @@ public class Main {
             lista = new ListaEncadeada<>(comparadorNome, true);
         } else if (opEstrutura == 2) {
             lista = new ListaEncadeada<>(comparadorNome, false);
+        } else if (opEstrutura == 3) {
+            lista = new ArvoreBinaria<>(comparadorTelefone);
         } else {
-            lista = new ArvoreBinaria<>(comparadorTelefone); 
+            // Uma opção inválida não cria nenhuma estrutura.
+            System.out.println("Opção inválida!");
+            scanner.close();
+            return;
         }
 
         int opcao = 0;
-        // O loop while (opcao != 7) continua exatamente igual a partir daqui...
-        // O menu fica rodando em loop até o usuário escolher a opção 7 (Sair)
+        // O menu continua até o usuário escolher sair.
         while (opcao != 7) {
             System.out.println("\n--- MENU DE CONTATOS ---");
             System.out.println("1. Carregar dados de arquivo");
@@ -47,16 +51,16 @@ public class Main {
             opcao = scanner.nextInt();
             scanner.nextLine(); // Limpa o buffer após ler o número
 
-            // Analisa qual opção foi escolhida e executa a ação correspondente
+            // Executa a opção escolhida.
             switch (opcao) {
 
                 case 1:
-                    // Chama o método que lê os contatos de um arquivo de texto
+                    // Carrega os contatos do arquivo.
                     carregarArquivo(lista);
                     break;
 
                 case 2:
-                    // Pede os dados do novo contato ao usuário
+                    // Pede o nome e o telefone do novo contato.
                     System.out.print("Digite o nome: ");
                     String nome = scanner.nextLine();
                     System.out.print("Digite o telefone: ");
@@ -69,21 +73,20 @@ public class Main {
                         // Verifica se já existe um contato com esse telefone (evita duplicata)
                         System.out.println("Erro: Já existe um contato com esse telefone!");
                     } else {
-                        // Tudo certo: adiciona o contato na lista
+                        // Adiciona o contato na estrutura escolhida.
                         lista.adicionar(new Contato(nome, telefone));
                         System.out.println("Contato adicionado com sucesso.");
                     }
                     break;
 
                 case 3:
-                    // Busca um contato pelo NOME e mede quanto tempo levou a busca
+                    // Pesquisa pelo nome e mede o tempo da busca.
                     System.out.print("Digite o nome para busca: ");
                     String buscaNome = scanner.nextLine();
 
                     long inicioNome = System.nanoTime(); // Marca o tempo de início
 
-                    // Pesquisa usando um Contato com nome preenchido e telefone vazio
-                    // (o equals() da classe Contato sabe que deve comparar pelo nome nesse caso)
+                    // Usa o nome informado para encontrar o contato.
                     Contato encontradoNome = pesquisarPorNome(lista, comparadorNome, new Contato(buscaNome, ""));
 
                     long fimNome = System.nanoTime(); // Marca o tempo de fim
@@ -97,14 +100,13 @@ public class Main {
                     break;
 
                 case 4:
-                    // Busca um contato pelo TELEFONE e mede o tempo da busca
+                    // Pesquisa pelo telefone e mede o tempo da busca.
                     System.out.print("Digite o telefone para busca: ");
                     String buscaTel = scanner.nextLine();
 
                     long inicioTel = System.nanoTime(); // Marca o tempo de início
 
-                    // Pesquisa usando um Contato com telefone preenchido e nome vazio
-                    // (o equals() vai comparar pelo telefone nesse caso)
+                    // A estrutura procura pelo telefone informado.
                     Contato encontradoTel = lista.pesquisar(new Contato("", buscaTel));
 
                     long fimTel = System.nanoTime(); // Marca o tempo de fim
@@ -118,7 +120,7 @@ public class Main {
                     break;
 
                 case 5:
-                    // Remove um contato pelo telefone e mede o tempo da operação
+                    // Remove pelo telefone e mede o tempo da operação.
                     System.out.print("Digite o telefone para remover: ");
                     String remTel = scanner.nextLine();
 
@@ -135,14 +137,11 @@ public class Main {
                     break;
 
                 case 6:
-                    // Altera os dados de um contato existente
-                    // A estratégia aqui é: remove o contato antigo e adiciona um novo com os dados
-                    // atualizados
+                    // Atualiza o contato removendo o antigo e adicionando o novo.
                     System.out.print("Digite o nome do contato que deseja alterar: ");
                     String altNome = scanner.nextLine();
 
-                    // Busca o contato pelo nome (telefone vazio para o equals do Contato comparar
-                    // pelo nome)
+                    // Primeiro procura o contato pelo nome.
                     Contato alvo = pesquisarPorNome(lista, comparadorNome, new Contato(altNome, ""));
 
                     if (alvo != null) {
@@ -159,8 +158,7 @@ public class Main {
                             // Verifica se o novo telefone digitado já existe na lista
                             Contato donoDoTelefone = lista.pesquisar(new Contato("", novoTel));
 
-                            // Se achou alguém com esse telefone E esse telefone NÃO É o do próprio contato
-                            // que estamos editando agora, então é uma duplicata inválida.
+                            // Não permite usar o telefone de outro contato.
                             if (donoDoTelefone != null && !novoTel.equals(alvo.getTelefone())) {
                                 System.out.println("Erro: Já existe outro contato com esse telefone!");
                             } else {
@@ -174,13 +172,13 @@ public class Main {
                     }
                     break;
                 case 7:
-                    // Encerra o programa e mostra quantos contatos ficaram na lista
+                    // Mostra quantos contatos ficaram na estrutura.
                     System.out.println("Encerrando o programa...");
                     System.out.println("Total de contatos na lista: " + lista.quantidadeNos());
                     break;
 
                 case 8:
-                    // Altura só existe para a árvore binária
+                    // Só mostra a altura se a estrutura for uma árvore.
                     if (lista instanceof ArvoreBinaria) {
                         System.out.println("Altura da árvore: " + ((ArvoreBinaria<Contato>) lista).altura());
                     } else {
@@ -196,8 +194,8 @@ public class Main {
         scanner.close(); // Fecha o scanner ao terminar (boa prática!)
     }
 
-    // Pesquisa por nome. Na árvore (indexada por telefone) percorre todos os nós;
-    // nas listas usa a pesquisa normal.
+    // Na árvore, pesquisa o nome em todos os nós.
+    // Nas listas, usa a pesquisa normal.
     private static Contato pesquisarPorNome(IColecao<Contato> lista, Comparator<Contato> comparadorNome, Contato chave) {
         if (lista instanceof ArvoreBinaria) {
             return ((ArvoreBinaria<Contato>) lista).pesquisar(chave, comparadorNome);
@@ -205,9 +203,8 @@ public class Main {
         return lista.pesquisar(chave);
     }
 
-    // Método para ler o arquivo
-    // Lê um arquivo chamado "entrada.txt" e carrega os contatos na lista.
-    // Cada linha do arquivo deve ter o formato: Nome;Telefone
+    // Carrega os contatos do arquivo entrada.txt.
+    // Cada linha deve ter o formato Nome;Telefone.
     private static void carregarArquivo(IColecao<Contato> lista) {
         File arquivo = new File("entrada.txt"); // Procura o arquivo na pasta do projeto
         try {
@@ -216,12 +213,12 @@ public class Main {
 
             while (leitor.hasNextLine()) { // Enquanto houver linhas no arquivo...
                 String linha = leitor.nextLine();
-                String[] dados = linha.split(";"); // O formato fica a seu critério, usei ";"
-                if (dados.length == 2) { // A linha tem exatamente 2 partes (nome e telefone)?
-                    Contato c = new Contato(dados[0].trim(), dados[1].trim()); // Cria o contato (trim() remove espaços
-                                                                               // extras)
-                    // Verifica duplicidade antes de inserir
-                    if (lista.pesquisar(c) == null) { // Só adiciona se o contato ainda não existir
+                String[] dados = linha.split(";"); // Separa o nome e o telefone.
+                if (dados.length == 2) { // Confere se temos nome e telefone.
+                    // Cria o contato retirando os espaços extras.
+                    Contato c = new Contato(dados[0].trim(), dados[1].trim());
+                    // Só insere se o contato ainda não existir.
+                    if (lista.pesquisar(c) == null) {
                         lista.adicionar(c);
                     }
                 }
@@ -230,9 +227,8 @@ public class Main {
             leitor.close(); // Fecha o arquivo (boa prática!)
 
             System.out.println("Arquivo lido e lista montada com sucesso!");
-            System.out.println("Tempo total gasto: " + (fim - inicio) / 1_000_000.0 + " ms"); // Converte de
-                                                                                              // nanosegundos para
-                                                                                              // milissegundos
+            // Mostra o tempo convertido para milissegundos.
+            System.out.println("Tempo total gasto: " + (fim - inicio) / 1_000_000.0 + " ms");
 
         } catch (FileNotFoundException e) {
             // Se o arquivo não for encontrado, avisa o usuário
