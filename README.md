@@ -1,4 +1,4 @@
-Técnicas de Programação e Análise de Algoritmos
+## Técnicas de Programação e Análise de Algoritmos
 
 Este repositório reúne os dois trabalhos desenvolvidos em Java para a disciplina de Técnicas de Programação e Análise de Algoritmos (TPA). O projeto utiliza uma **agenda de contatos** para aplicar estruturas de dados genéricas e analisar o desempenho das operações de inserção, pesquisa e remoção.
 
