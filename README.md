@@ -1,4 +1,4 @@
-# Trabalhos 1 e 2 — Técnicas de Programação e Análise de Algoritmos
+Técnicas de Programação e Análise de Algoritmos
 
 Este repositório reúne os dois trabalhos desenvolvidos em Java para a disciplina de Técnicas de Programação e Análise de Algoritmos (TPA). O projeto utiliza uma **agenda de contatos** para aplicar estruturas de dados genéricas e analisar o desempenho das operações de inserção, pesquisa e remoção.
 
@@ -111,18 +111,6 @@ FB = altura do filho direito - altura do filho esquerdo
 
 Quando necessário, realiza rotações à esquerda, à direita, esquerda-direita ou direita-esquerda. Os métodos herdados de pesquisa, caminhamento e contagem continuam disponíveis.
 
-### Complexidade esperada
-
-Os valores abaixo se referem às operações **individuais na estrutura**, sem incluir leitura de arquivos nem a checagem de duplicidade feita pela agenda.
-
-| Estrutura / situação | Adicionar | Pesquisar pela chave | Remover | Quantidade de nós |
-|---|---|---|---|---|
-| Árvore binária degenerada | `O(n)` | `O(n)` | `O(n)` | `O(1)` |
-| Árvore binária perfeitamente balanceada | `O(log n)` | `O(log n)` | `O(log n)` | `O(1)` |
-| Árvore AVL | `O(log n)` | `O(log n)` | `O(log n)` | `O(1)` |
-
-Para as árvores indexadas por telefone, uma **pesquisa por nome** pode exigir `O(n)`, já que o nome não é a chave de organização.
-
 ## Geração dos arquivos de teste — Trabalho 2
 
 O arquivo `GeradorContatos.java` foi adaptado da estratégia de geração de dados apresentada pelo professor Victorio Albani de Carvalho em [GeradorArquivos](https://github.com/victoriocarvalho/GeradorArquivos).
@@ -132,14 +120,7 @@ O gerador produz **dois arquivos para cada tamanho**, sempre com os mesmos conta
 - **Ordenado:** telefones em ordem crescente. A inserção em uma árvore binária comum produz uma árvore degenerada.
 - **Balanceado:** contatos inseridos começando pelo elemento central de cada intervalo e seguindo recursivamente pelas duas metades. A inserção em uma árvore binária comum produz uma árvore perfeitamente balanceada.
 
-São utilizados quatro tamanhos:
-
-| Quantidade de contatos | Arquivo ordenado | Arquivo balanceado |
-|---:|---|---|
-| 8.191 | `contatos_8191_ordenado.txt` | `contatos_8191_balanceado.txt` |
-| 16.383 | `contatos_16383_ordenado.txt` | `contatos_16383_balanceado.txt` |
-| 32.767 | `contatos_32767_ordenado.txt` | `contatos_32767_balanceado.txt` |
-| 65.535 | `contatos_65535_ordenado.txt` | `contatos_65535_balanceado.txt` |
+São utilizados quatro tamanhos: **8.191, 16.383, 32.767 e 65.535**
 
 Os arquivos balanceados são utilizados para avaliar a árvore binária comum com menor altura. Os ordenados são utilizados para comparar a árvore binária degenerada com a AVL.
 
@@ -186,33 +167,11 @@ O gerador criará os oito arquivos `.txt` indicados na tabela anterior, na pasta
 
 O programa `Main` lê especificamente o arquivo `entrada.txt`. Portanto, antes de um teste, faça uma cópia do arquivo desejado com esse nome.
 
-**Windows (Prompt de Comando):**
-
-```bat
-copy contatos_8191_ordenado.txt entrada.txt
-java Main
-```
-
-**Linux/macOS:**
-
-```bash
-cp contatos_8191_ordenado.txt entrada.txt
-java Main
-```
-
 Selecione a árvore binária ou AVL, escolha **1 - Carregar dados de arquivo** e execute as pesquisas e a remoção desejadas.
 
 ### 5. Cuidados com árvores degeneradas
 
 Na árvore binária comum, os arquivos ordenados formam uma cadeia muito profunda. Como as operações foram implementadas de forma recursiva, testes com dezenas de milhares de nós podem ocasionar `StackOverflowError` na configuração padrão do Java.
-
-Para reproduzir os experimentos com uma pilha maior, pode ser necessário iniciar o programa assim:
-
-```bash
-java -Xss96m Main
-```
-
-Esse parâmetro aumenta a pilha da JVM, sem modificar os algoritmos. A disponibilidade de memória e o limite necessário dependem do computador utilizado.
 
 ## Análise empírica
 
@@ -225,12 +184,6 @@ O programa utiliza `System.nanoTime()` para medir as operações.
 
 No Trabalho 2, a análise empírica compara árvores degeneradas, árvores balanceadas e AVL nos quatro tamanhos gerados, além de permitir uma comparação com as listas do Trabalho 1.
 
-As medições detalhadas, os gráficos e o relatório específico do Trabalho 2 deverão ser disponibilizados no repositório junto à entrega final, conforme as orientações da disciplina.
-
-## Referências
-
-- [Biblioteca-base de árvores e interface utilizadas na disciplina](https://github.com/victoriocarvalho/tpa_bsi)
-- [Geradores de arquivos do professor](https://github.com/victoriocarvalho/GeradorArquivos)
 
 ## Integrantes do projeto
 
