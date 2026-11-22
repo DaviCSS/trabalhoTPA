@@ -1,3 +1,5 @@
+package agenda;
+
 import estruturas.IColecao;
 
 import java.util.Comparator;

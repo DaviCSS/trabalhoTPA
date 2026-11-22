@@ -1,3 +1,5 @@
+package agenda;
+
 // Essa classe representa um contato da agenda telefônica.
 // Ela guarda o nome e o telefone de uma pessoa.
 public class Contato {

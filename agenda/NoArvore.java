@@ -1,3 +1,5 @@
+package agenda;
+
 public class NoArvore<T> {
     // Cada nó guarda um valor e aponta para dois filhos.
     private T valor;

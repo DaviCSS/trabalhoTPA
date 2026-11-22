@@ -14,7 +14,9 @@ jobs:
         with:
           distribution: temurin
           java-version: '21'
-      - name: Compilar código antigo e as estruturas
-        run: javac -encoding UTF-8 -d build *.java estruturas/*.java testes/*.java
+      - name: Compilar programa de agenda e estruturas
+        run: javac -encoding UTF-8 -d build agenda/*.java estruturas/*.java testes/*.java
       - name: Testar lista e fila próprias
         run: java -cp build testes.TesteEstruturas
+      - name: Verificar menu da agenda
+        run: printf '1\n7\n' | java -cp build agenda.Main

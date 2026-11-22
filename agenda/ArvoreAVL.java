@@ -1,3 +1,5 @@
+package agenda;
+
 import java.util.Comparator;
 
 public class ArvoreAVL<T> extends ArvoreBinaria<T> {

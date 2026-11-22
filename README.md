@@ -1,30 +1,11 @@
 ## Técnicas de Programação e Análise de Algoritmos
 
-Este repositório reúne os trabalhos desenvolvidos em Java para a disciplina de Técnicas de Programação e Análise de Algoritmos (TPA). Os Trabalhos 1 e 2 são voltados a uma agenda de contatos; o Trabalho 3 implementará otimização de rotas de entrega com grafos. O projeto utiliza uma **agenda de contatos** para aplicar estruturas de dados genéricas e analisar o desempenho das operações de inserção, pesquisa e remoção.
+Este repositório reúne os dois trabalhos desenvolvidos em Java para a disciplina de Técnicas de Programação e Análise de Algoritmos (TPA). O projeto utiliza uma **agenda de contatos** para aplicar estruturas de dados genéricas e analisar o desempenho das operações de inserção, pesquisa e remoção.
 
 - **Trabalho 1 — Listas Encadeadas:** implementação de listas genéricas ordenadas e desordenadas.
 - **Trabalho 2 — Árvores Binárias e AVL:** implementação de árvores binárias de busca, árvores AVL e comparação de complexidade entre diferentes estruturas e formatos de árvore.
-- **Trabalho 3 — Grafos:** biblioteca genérica de grafos e aplicação de rotas com BFS, Dijkstra e PCV por busca exaustiva (em desenvolvimento).
 
 A agenda do Trabalho 1 foi aproveitada no Trabalho 2. As classes das listas continuam disponíveis, e o programa principal permite escolher a estrutura utilizada.
-
-## Trabalho 3 — Preparação e próximo desenvolvimento
-
-A primeira parte organiza as classes próprias de listas no pacote `estruturas`, adiciona iteração à lista e implementa uma `FilaEncadeada<T>` para a BFS. O caminhamento em nível da árvore antiga também passa a usar a fila própria, sem `java.util.LinkedList`.
-
-Pacotes preparados: `grafos/`, `algoritmos/`, `aplicacao/` e `entrada/`; o diretório `dados/` receberá exemplos fictícios. Ainda **não** foram implementados o grafo, a BFS, Dijkstra, PCV ou o aplicativo.
-
-Próxima sequência: grafo genérico com listas de adjacências → BFS → Dijkstra a partir da origem e de cada entrega → busca exaustiva do PCV → aplicativo com entrada por arquivo, inclusão de vértices/arestas e exibição da rota.
-
-Para compilar todo o código existente e executar os novos testes:
-
-```bash
-javac -encoding UTF-8 -d build *.java estruturas/*.java testes/*.java
-java -cp build testes.TesteEstruturas
-java -cp build Main
-```
-
-As classes `java.util.Iterator` e `Comparator` são usadas apenas como contratos e critérios de comparação; as listas e filas armazenam dados em nós próprios.
 
 ## Objetivos
 
@@ -47,15 +28,15 @@ As classes `java.util.Iterator` e `Comparator` são usadas apenas como contratos
 
 ## Organização dos arquivos
 
-As classes antigas de agenda e árvores continuam na raiz, enquanto as estruturas genéricas reutilizadas foram organizadas no pacote `estruturas/`. As novas partes serão separadas em pacotes por responsabilidade.
+Os arquivos Java ficam na raiz do repositório e não utilizam pacotes.
 
 | Arquivo | Descrição |
 |---|---|
 | `Main.java` | Programa principal: menu da agenda, operações com contatos, leitura do arquivo e medição de tempos. |
 | `Contato.java` | Representa um contato, com nome e telefone. |
-| `estruturas/IColecao.java` | Interface compartilhada pelas listas e árvores, com as operações básicas. |
-| `estruturas/ListaEncadeada.java` | Implementação genérica das listas ordenadas e desordenadas do Trabalho 1. |
-| `estruturas/No.java` | Nó utilizado pela lista encadeada. |
+| `IColecao.java` | Interface compartilhada pelas listas e árvores, com as operações básicas. |
+| `ListaEncadeada.java` | Implementação genérica das listas ordenadas e desordenadas do Trabalho 1. |
+| `No.java` | Nó utilizado pela lista encadeada. |
 | `ArvoreBinariaBase.java` | Classe abstrata fornecida pelo professor, com o comparador e os métodos obrigatórios das árvores. |
 | `ArvoreBinaria.java` | Árvore binária de busca genérica, com operações recursivas, cálculo de altura e caminhamentos. |
 | `NoArvore.java` | Nó utilizado nas árvores, com valor, filhos esquerdo e direito e altura para a AVL. |
@@ -159,13 +140,13 @@ cd trabalhoTPA
 Compile os arquivos Java:
 
 ```bash
-javac -encoding UTF-8 -d build *.java estruturas/*.java testes/*.java
+javac *.java
 ```
 
 ### 2. Executar a agenda
 
 ```bash
-java -cp build Main
+java Main
 ```
 
 Escolha uma das quatro estruturas e utilize as opções do menu.
@@ -177,7 +158,7 @@ Para carregar contatos, coloque o arquivo `entrada.txt` na pasta em que o progra
 Depois de compilar, execute:
 
 ```bash
-java -cp build GeradorContatos
+java GeradorContatos
 ```
 
 O gerador criará os oito arquivos `.txt` indicados na tabela anterior, na pasta de execução.
