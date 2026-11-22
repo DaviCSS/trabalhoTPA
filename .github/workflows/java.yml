@@ -1,0 +1,20 @@
+name: Java - compilacao e estruturas
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  compilacao:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Compilar código antigo e as estruturas
+        run: javac -encoding UTF-8 -d build *.java estruturas/*.java testes/*.java
+      - name: Testar lista e fila próprias
+        run: java -cp build testes.TesteEstruturas

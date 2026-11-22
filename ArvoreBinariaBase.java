@@ -1,3 +1,4 @@
+import estruturas.IColecao;
 
 import java.util.Comparator;
 

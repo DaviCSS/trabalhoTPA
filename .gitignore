@@ -1,0 +1,6 @@
+# Compilação Java e configurações locais
+*.class
+/build/
+/out/
+/.idea/
+*.iml

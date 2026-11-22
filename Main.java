@@ -1,3 +1,5 @@
+import estruturas.IColecao;
+import estruturas.ListaEncadeada;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Comparator;

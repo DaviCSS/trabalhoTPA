@@ -1,3 +1,5 @@
+package estruturas;
+
 // Essa classe representa um "nó" da lista encadeada.
 // Pensa assim: cada nó é como uma caixinha que guarda um valor
 // e aponta para a próxima caixinha da fila.

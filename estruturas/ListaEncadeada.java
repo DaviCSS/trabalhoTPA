@@ -1,10 +1,14 @@
+package estruturas;
+
 import java.util.Comparator;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 // Essa classe é a nossa lista encadeada.
 // Ela implementa a interface IColecao, que define quais operações toda coleção deve ter.
 // O <T> significa que ela é genérica: funciona com qualquer tipo de dado (Contato, Integer, etc.)
 
-public class ListaEncadeada<T> implements IColecao<T> {
+public class ListaEncadeada<T> implements IColecao<T>, Iterable<T> {
     private No<T> prim, ult; // "prim" aponta pro primeiro nó, "ult" aponta pro último
     private int quant; // Guarda quantos elementos tem na lista no momento
     private final boolean ordenada; // Define se a lista deve se manter em ordem ou não
@@ -160,5 +164,33 @@ public class ListaEncadeada<T> implements IColecao<T> {
             aux = aux.getProx(); // Avança para o próximo
         }
         return s + "]"; // Fecha o colchete e retorna
+    }
+
+    // Facilita consultar se a lista possui elementos.
+    public boolean estaVazia() {
+        return this.quant == 0;
+    }
+
+    // Permite usar 'for (T item : lista)' sem recorrer a coleções prontas do Java.
+    @Override
+    public Iterator<T> iterator() {
+        return new Iterator<T>() {
+            private No<T> atual = prim;
+
+            @Override
+            public boolean hasNext() {
+                return atual != null;
+            }
+
+            @Override
+            public T next() {
+                if (atual == null) {
+                    throw new NoSuchElementException("Fim da lista.");
+                }
+                T valor = atual.getValor();
+                atual = atual.getProx();
+                return valor;
+            }
+        };
     }
 }

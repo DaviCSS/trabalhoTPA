@@ -1,6 +1,5 @@
 import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.Queue;
+import estruturas.FilaEncadeada;
 
 public class ArvoreBinaria<T> extends ArvoreBinariaBase<T> {
     protected NoArvore<T> raiz;
@@ -146,25 +145,25 @@ public class ArvoreBinaria<T> extends ArvoreBinariaBase<T> {
         // A fila permite visitar todos os nós de cada nível.
         if (this.raiz == null) return "[]";
         StringBuilder resultado = new StringBuilder("[");
-        Queue<NoArvore<T>> fila = new LinkedList<>();
-        fila.add(this.raiz);
+        FilaEncadeada<NoArvore<T>> fila = new FilaEncadeada<>();
+        fila.enfileirar(this.raiz);
 
-        while (!fila.isEmpty()) {
+        while (!fila.estaVazia()) {
             // Guardamos quantos nós pertencem ao nível atual.
-            int quantidadeNivel = fila.size();
+            int quantidadeNivel = fila.tamanho();
 
             for (int i = 0; i < quantidadeNivel; i++) {
-                NoArvore<T> atual = fila.remove();
+                NoArvore<T> atual = fila.desenfileirar();
                 if (i > 0) resultado.append(", ");
                 resultado.append(atual.getValor());
 
                 // Os filhos ficam na fila para o próximo nível.
-                if (atual.getEsq() != null) fila.add(atual.getEsq());
-                if (atual.getDir() != null) fila.add(atual.getDir());
+                if (atual.getEsq() != null) fila.enfileirar(atual.getEsq());
+                if (atual.getDir() != null) fila.enfileirar(atual.getDir());
             }
 
             // Se houver mais nós, começamos uma nova linha.
-            if (!fila.isEmpty()) resultado.append("\n");
+            if (!fila.estaVazia()) resultado.append("\n");
         }
 
         return resultado.append("]").toString();
